@@ -1,0 +1,46 @@
+events {
+  #何も追加しないが、イベントコンテキストのために書いておく必要がある
+}
+
+http {
+
+  server{
+    listen 80; #ポートを指定
+    server_name localhost; #サーバー名
+
+    root /var/www/html; # rootディレクトリ
+
+    #mineタイプのインクルード(通常は１つずつ設定しないといけないが、まとめられているファイルが存在しているので、そのファイルをインクルードするだけでいい。ファイルとして読み込まれているがCSS等が反映されていな場合はこの記述が抜けている可能性がある。)
+    include       /etc/nginx/mime.types;
+
+    #prefix match
+    #「/test」から始まるものは全て当てはまる
+    location /prefix {
+      return 200 'hello nginx "test" location - prefix match';
+    }
+
+    #exact match
+    #完全一致で当てはまる
+    location = /exact {
+      return 200 'hello nginx "test" location - exact match';
+    }
+
+    #exact match (case sensitive)
+    #正規表現で当てはめる(大文字小文字は区別される)
+    location ~ /regex[0-9] {
+      return 200 'hello nginx "test" location - regex match';
+    }
+
+    #exact match (case insensitive)
+    #正規表現で当てはめる(大文字小文字は区別されない)
+    location ~* /insensitive-regex[0-9] {
+      return 200 'hello nginx "test" location - insensitive-regex match';
+    }
+
+    #優先度問題
+    #perferential
+    location ^~ /insensitive-regex3 {
+      return 200 'hello nginx "test" location - 最優先 match';
+    }
+  }
+}

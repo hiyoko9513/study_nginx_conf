@@ -1,0 +1,20 @@
+  全てのコンテナ停止
+
+```
+$ docker rm $(docker ps -q -a)
+```
+  全てのコンテナを削除
+
+```
+$ docker rmi $(docker images -q) -f
+```
+  全てのイメージの削除
+
+```
+$ docker system prune
+```
+  Dockerシステムを初期状態に戻す
+
+```
+
+デスクトップアプリの虫マーク→clear

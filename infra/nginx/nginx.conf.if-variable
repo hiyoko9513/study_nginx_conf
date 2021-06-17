@@ -1,0 +1,44 @@
+events {
+  #何も追加しないが、イベントコンテキストのために書いておく必要がある
+}
+
+
+http {
+
+  server{
+    listen 80; #ポートを指定
+    server_name localhost; #サーバー名
+
+    root /var/www/html; # rootディレクトリ
+
+    #注意 インデント、空白はしっかりしないとエラーが発生
+    # if ( $arg_apikey != 1234 ) {
+    #   return 401 "401エラー";
+    # }
+    # if ( $request_method = POST ) {
+    #   return 405;
+    # }
+
+    #locationの中でifを使用することはnginxに推奨されている。
+    location /inspect {
+      # $host ： ホスト名
+      # $uri ： uri名
+      # $args ： リクエスト一覧？
+      # $arg_パラメーター名 ： 特定のリクエストの値
+      # $request_method ： メソッド(例：POST)
+      return 200 "$host\n$uri\n$args\n$arg_apikey\n$request_method";
+    }
+    
+    # 変数のセットと利用
+    set $weekend 'No';
+
+    # check weekend
+    if ( $date_local ~ 'Saturday|Sunday' ) { 
+      set $weekend 'Yes';
+    }
+
+    location /is_weekend {
+      return 200 $weekend;
+    }
+  }
+}

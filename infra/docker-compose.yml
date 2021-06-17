@@ -1,0 +1,53 @@
+version: "3.8"
+volumes:
+  db-store:
+  php-fpm-socket:
+services:
+  nginx:
+    build: ./nginx
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ../hiyoko:/var/www/html
+      - ./nginx/sites:/etc/nginx/conf.d
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/ssl:/etc/nginx/ssl
+    depends_on:
+      - php
+
+  php:
+    build: ./php
+    volumes:
+      - ../hiyoko:/var/www/html
+      - ./php/php.ini:/usr/local/etc/php/php.ini
+    depends_on:
+      - mysql
+
+  mysql:
+    image: mysql:5.7
+    volumes:
+      - .mysqldata:/var/lib/mysql
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: php_hiyoko
+      MYSQL_USER: hiyoko
+      MYSQL_PASSWORD: hiyoko@0113
+
+  phpmyadmin:
+    image: phpmyadmin
+    environment:
+      PMA_HOST: "mysql"
+      UPLOAD_LIMIT: 102400000
+    ports:
+      - 8888:80
+    depends_on:
+      - mysql
+
+  mailhog:
+    image: mailhog/mailhog
+    ports:
+      - "1025:1025"
+      - "8025:8025"

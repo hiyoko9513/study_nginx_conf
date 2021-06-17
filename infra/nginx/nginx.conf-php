@@ -1,0 +1,33 @@
+user  nginx; #ユーザーの指定
+
+events {
+  #何も追加しないが、イベントコンテキストのために書いておく必要がある
+}
+
+http {
+
+  include mime.types;
+
+  server{
+    listen 80; #ポートを指定
+    server_name localhost; #サーバー名
+
+    root /var/www/html; # rootディレクトリ
+
+    index index.php index.html; #indexの順番
+
+    #[$uri/] index設定をみに行く
+    location / {
+      try_files $uri $uri/ =404;
+    }
+
+    location ~\.php$ {
+      #.phpで終わるものがマッチ
+      include fastcgi.conf;
+      #fpm.sockの検索方法
+      #$ find / -name *fpm.sock
+      fastcgi_pass unix:<fpm.sockのパス>;
+      
+    }
+  }
+}

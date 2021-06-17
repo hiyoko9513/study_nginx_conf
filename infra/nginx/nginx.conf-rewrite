@@ -1,0 +1,32 @@
+events {
+  #何も追加しないが、イベントコンテキストのために書いておく必要がある
+}
+
+http {
+
+  server{
+    listen 80; #ポートを指定
+    server_name localhost; #サーバー名
+
+    root /var/www/html; # rootディレクトリ
+
+    # [\w+]：英数字以外の全て
+    # [(\w+)]：変数に入れることができる
+    # [last]：これ以上の書き換えがあっても無効化する。
+    rewrite ^/user/(\w+) /rewrite/$1 last;
+    rewrite ^/rewrite/hiyoko /peach.jpg;
+
+    location /logo {
+      return 307 /peach.jpg;
+    }
+
+    location /rewrite {
+      return 200 "hello user";
+    }
+
+    #優先順位が高い
+    location = /rewrite/hiyoko {
+      return 200 "hello hiyoko";
+    }
+  }
+}

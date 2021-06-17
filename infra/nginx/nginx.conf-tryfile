@@ -1,0 +1,25 @@
+events {
+  #何も追加しないが、イベントコンテキストのために書いておく必要がある
+}
+
+http {
+
+  server{
+    listen 80; #ポートを指定
+    server_name localhost; #サーバー名
+
+    root /var/www/html; # rootディレクトリ
+
+    # 引数の順番でファイルの存在チェックをする。なければ次の引数へ。
+    try_files $uri /peac.jpg /hiyoko @error_404;
+
+    location /hiyoko {
+      return 200 "hiyoko dayo";
+    }
+
+    location @error_404 {
+      return 404 "sorry, that file could not be found.";
+    }
+
+  }
+}
